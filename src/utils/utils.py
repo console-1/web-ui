@@ -3,6 +3,7 @@ import os
 import time
 from pathlib import Path
 from typing import Dict, Optional
+from pydantic import SecretStr
 
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -17,7 +18,8 @@ PROVIDER_DISPLAY_NAMES = {
     "azure_openai": "Azure OpenAI",
     "anthropic": "Anthropic",
     "deepseek": "DeepSeek",
-    "gemini": "Gemini"
+    "gemini": "Gemini",
+    "openrouter": "OpenRouter"
 }
 
 def get_llm_model(provider: str, **kwargs):
@@ -29,8 +31,8 @@ def get_llm_model(provider: str, **kwargs):
     """
     if provider not in ["ollama"]:
         env_var = "GOOGLE_API_KEY" if provider == "gemini" else f"{provider.upper()}_API_KEY"
-        api_key = kwargs.get("api_key", "") or os.getenv(env_var, "")
-        if not api_key:
+        api_key = SecretStr(kwargs.get("api_key", "") or os.getenv(env_var, ""))
+        if not api_key.get_secret_value():
             handle_api_key_error(provider, env_var)
         kwargs["api_key"] = api_key
 
@@ -41,10 +43,12 @@ def get_llm_model(provider: str, **kwargs):
             base_url = kwargs.get("base_url")
 
         return ChatAnthropic(
-            model_name=kwargs.get("model_name", "claude-3-5-sonnet-20240620"),
+            model_name=kwargs.get("model_name", "claude-3-5-sonnet-20241022"),
             temperature=kwargs.get("temperature", 0.0),
             base_url=base_url,
             api_key=api_key,
+            timeout=kwargs.get("timeout", 120),
+            stop=kwargs.get("stop", None)
         )
     elif provider == "openai":
         if not kwargs.get("base_url", ""):
@@ -57,6 +61,19 @@ def get_llm_model(provider: str, **kwargs):
             temperature=kwargs.get("temperature", 0.0),
             base_url=base_url,
             api_key=api_key,
+        )
+    elif provider == "openrouter":
+        if not kwargs.get("base_url", ""):
+            base_url = os.getenv("OPENROUTER_ENDPOINT", "https://openrouter.ai/api/v1")
+        else:
+            base_url = kwargs.get("base_url")
+
+        return ChatOpenAI(
+            model=kwargs.get("model_name", "openai/gpt-4-turbo"),
+            temperature=kwargs.get("temperature", 0.0),
+            base_url=base_url,
+            api_key=api_key,
+            default_headers={"HTTP-Referer": "https://github.com/browser-use/browser-use", "X-Title": "Browser Use"}
         )
     elif provider == "deepseek":
         if not kwargs.get("base_url", ""):
@@ -82,7 +99,7 @@ def get_llm_model(provider: str, **kwargs):
         return ChatGoogleGenerativeAI(
             model=kwargs.get("model_name", "gemini-2.0-flash-exp"),
             temperature=kwargs.get("temperature", 0.0),
-            google_api_key=api_key,
+            api_key=api_key,
         )
     elif provider == "ollama":
         if not kwargs.get("base_url", ""):
@@ -127,7 +144,17 @@ model_names = {
     "deepseek": ["deepseek-chat", "deepseek-reasoner"],
     "gemini": ["gemini-2.0-flash-exp", "gemini-2.0-flash-thinking-exp", "gemini-1.5-flash-latest", "gemini-1.5-flash-8b-latest", "gemini-2.0-flash-thinking-exp-1219" ],
     "ollama": ["qwen2.5:7b", "llama2:7b", "deepseek-r1:14b", "deepseek-r1:32b"],
-    "azure_openai": ["gpt-4o", "gpt-4", "gpt-3.5-turbo"]
+    "azure_openai": ["gpt-4o", "gpt-4", "gpt-3.5-turbo"],
+    "openrouter": [
+        "openai/gpt-4-turbo",
+        "openai/gpt-4",
+        "anthropic/claude-3-opus",
+        "anthropic/claude-3-sonnet",
+        "google/gemini-pro",
+        "meta-llama/llama-2-70b-chat",
+        "mistral/mistral-large",
+        "deepseek/deepseek-r1:free"
+    ]
 }
 
 # Callback to update the model name dropdown based on the selected provider

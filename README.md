@@ -1,6 +1,6 @@
-<img src="./assets/web-ui.png" alt="Browser Use Web UI" width="full"/>
+# Browser Use Web UI
 
-<br/>
+![Browser Use Web UI](./assets/web-ui.png)
 
 [![GitHub stars](https://img.shields.io/github/stars/browser-use/web-ui?style=social)](https://github.com/browser-use/web-ui/stargazers)
 [![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
@@ -19,7 +19,7 @@ We would like to officially thank [WarmShao](https://github.com/warmshao) for hi
 
 **Persistent Browser Sessions:** You can choose to keep the browser window open between AI tasks, allowing you to see the complete history and state of AI interactions.
 
-<video src="https://github.com/user-attachments/assets/56bc7080-f2e3-4367-af22-6bf2245ff6cb" controls="controls">Your browser does not support playing this video!</video>
+[🎥 Watch the Demo Video](https://github.com/user-attachments/assets/56bc7080-f2e3-4367-af22-6bf2245ff6cb)
 
 ## Installation Options
 
@@ -60,6 +60,7 @@ playwright install
    - Git to clone the repository
 
 2. **Setup:**
+
    ```bash
    # Clone the repository
    git clone https://github.com/browser-use/web-ui.git
@@ -71,6 +72,7 @@ playwright install
    ```
 
 3. **Run with Docker:**
+
    ```bash
    # Build and start the container with default settings (browser closes after AI tasks)
    docker compose up --build
@@ -82,19 +84,21 @@ playwright install
 4. **Access the Application:**
    - WebUI: `http://localhost:7788`
    - VNC Viewer (to see browser interactions): `http://localhost:6080/vnc.html`
-   
-   Default VNC password is "vncpassword". You can change it by setting the `VNC_PASSWORD` environment variable in your `.env` file.
 
+   Default VNC password is "vncpassword". You can change it by setting the `VNC_PASSWORD` environment variable in your `.env` file.
 
 ## Usage
 
 ### Local Setup
-1.  Copy `.env.example` to `.env` and set your environment variables, including API keys for the LLM. `cp .env.example .env`
-2.  **Run the WebUI:**
+
+1. Copy `.env.example` to `.env` and set your environment variables, including API keys for the LLM. `cp .env.example .env`
+2. **Run the WebUI:**
+
     ```bash
     python webui.py --ip 127.0.0.1 --port 7788
     ```
-4. WebUI options:
+
+3. WebUI options:
    - `--ip`: The IP address to bind the WebUI to. Default is `127.0.0.1`.
    - `--port`: The port to bind the WebUI to. Default is `7788`.
    - `--theme`: The theme for the user interface. Default is `Ocean`.
@@ -106,35 +110,42 @@ playwright install
      - **Citrus**: A vibrant, citrus-inspired palette with bright and fresh colors.
      - **Ocean** (default): A blue, ocean-inspired theme providing a calming effect.
    - `--dark-mode`: Enables dark mode for the user interface.
-3.  **Access the WebUI:** Open your web browser and navigate to `http://127.0.0.1:7788`.
-4.  **Using Your Own Browser(Optional):**
+4. **Access the WebUI:** Open your web browser and navigate to `http://127.0.0.1:7788`.
+5. **Using Your Own Browser(Optional):**
     - Set `CHROME_PATH` to the executable path of your browser and `CHROME_USER_DATA` to the user data directory of your browser. Leave `CHROME_USER_DATA` empty if you want to use local user data.
       - Windows
+
         ```env
          CHROME_PATH="C:\Program Files\Google\Chrome\Application\chrome.exe"
          CHROME_USER_DATA="C:\Users\YourUsername\AppData\Local\Google\Chrome\User Data"
         ```
+
         > Note: Replace `YourUsername` with your actual Windows username for Windows systems.
       - Mac
+
         ```env
          CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
          CHROME_USER_DATA="/Users/YourUsername/Library/Application Support/Google/Chrome"
         ```
+
     - Close all Chrome windows
     - Open the WebUI in a non-Chrome browser, such as Firefox or Edge. This is important because the persistent browser context will use the Chrome data when running the agent.
     - Check the "Use Own Browser" option within the Browser Settings.
-5. **Keep Browser Open(Optional):**
+6. **Keep Browser Open(Optional):**
     - Set `CHROME_PERSISTENT_SESSION=true` in the `.env` file.
 
 ### Docker Setup
+
 1. **Environment Variables:**
    - All configuration is done through the `.env` file
    - Available environment variables:
-     ```
+
+     ```ini
      # LLM API Keys
      OPENAI_API_KEY=your_key_here
      ANTHROPIC_API_KEY=your_key_here
      GOOGLE_API_KEY=your_key_here
+     OPENROUTER_API_KEY=your_key_here  # Get from https://openrouter.ai/keys
 
      # Browser Settings
      CHROME_PERSISTENT_SESSION=true   # Set to true to keep browser open between AI tasks
@@ -164,6 +175,7 @@ playwright install
    - You can now see all browser interactions in real-time
 
 4. **Container Management:**
+
    ```bash
    # Start with persistent browser
    CHROME_PERSISTENT_SESSION=true docker compose up -d
@@ -179,6 +191,7 @@ playwright install
    ```
 
 ## Changelog
+
 - [x] **2025/01/26:** Thanks to @vvincent1234. Now browser-use-webui can combine with DeepSeek-r1 to engage in deep thinking!
 - [x] **2025/01/10:** Thanks to @casistack. Now we have Docker Setup option and also Support keep browser open between tasks.[Video tutorial demo](https://github.com/browser-use/web-ui/issues/1#issuecomment-2582511750).
 - [x] **2025/01/06:** Thanks to @richard-devbot. A New and Well-Designed WebUI is released. [Video tutorial demo](https://github.com/warmshao/browser-use-webui/issues/1#issuecomment-2573393113).
